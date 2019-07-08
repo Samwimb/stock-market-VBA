@@ -1,0 +1,192 @@
+Sub Stock_Data_Challenge()
+    'Dim xSh As Worksheet
+    'Application.ScreenUpdating = False
+    'For Each xSh In Worksheets
+        'xSh.Select
+       ' Call RunCode
+    'Next
+    'Application.ScreenUpdating = True
+'End Sub
+'Sub RunCode()
+
+Dim ws As Worksheet
+
+For Each ws In Worksheets
+
+        'set initial variable to hold stock name
+    Dim stock As String
+    
+    'set variable to hold stock volume total
+    Dim volume_total As Double
+    
+    'Summary Table
+    Dim summary_table As Integer
+    summary_table = 2
+    
+    'variable to hold yearly change
+    '''''''should this be set as double??'''''''''
+    Dim yearly_change As Double
+    
+    'yearly_change = closing price on last day - opening price on first day
+    Dim open_price As Double
+    open_price = ws.Cells(2, 3).Value
+    'Dim close_price As Double
+    Dim close_price As Double
+    
+    
+    'Variable for percent change
+    Dim percent_change As Double
+    
+
+
+    'Set Headers for my summary table
+    ws.Range("I1").Value = "Ticker"
+    ws.Range("J1").Value = "Yearly Change"
+    ws.Range("K1").Value = "Percent Change"
+    ws.Range("L1").Value = "Total Stock Volume"
+    ws.Range("O1").Value = "Ticker"
+    ws.Range("P1").Value = "Value"
+    ws.Range("N2").Value = "Greatest % Increase"
+    ws.Range("N3").Value = "Greatest % Decrease"
+    ws.Range("N4").Value = "Greatest Total Volume"
+    
+    
+    
+    
+    'set varibale to find the last row in the spreadsheet
+    Dim lastrow As Long
+    
+    lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    'MsgBox ("last row: " & lastrow&)
+    
+    For i = 2 To lastrow
+        
+                If ws.Cells(i, 1).Value <> ws.Cells(i + 1, 1).Value Then
+                    
+                close_price = ws.Cells(i, 6).Value
+                    
+                stock = ws.Cells(i, 1).Value
+                volume_total = volume_total + ws.Cells(i, 7).Value
+                yearly_change = close_price - open_price
+                
+              If open_price = 0 Then
+              
+              percent_change = 0
+              
+              Else
+              
+              percent_change = (close_price / open_price) - 1
+              
+              End If
+
+                
+                    
+                ws.Cells(summary_table, 9).Value = stock
+                ws.Cells(summary_table, 10).Value = yearly_change
+                    If yearly_change > "0" Then
+                    ws.Cells(summary_table, 10).Interior.ColorIndex = 4
+                    ElseIf yearly_change < "0" Then
+                    ws.Cells(summary_table, 10).Interior.ColorIndex = 3
+                    Else
+                    ws.Cells(summary_table, 10).Interior.ColorIndex = 6
+                    End If
+                ws.Cells(summary_table, 11).Value = percent_change
+                ws.Cells(summary_table, 12).Value = volume_total
+                
+                    
+                summary_table = summary_table + 1
+                
+                open_price = ws.Cells(i + 1, 3).Value
+                
+                volume_total = 0
+                    
+                Else: volume_total = volume_total + ws.Cells(i, 7).Value
+                    
+                End If
+        
+    Next i
+    
+    ws.Range("K2: K" & lastrow).NumberFormat = "0.00%"
+    
+    Dim greatest_increase As Double
+    Dim greatest_decrease As Double
+    Dim greatest_volume As Double
+    
+    Dim greatest_increase_ticker As String
+    Dim greatest_decrease_ticker As String
+    Dim greatest_volume_ticker As String
+    
+    
+    greatest_increase = ws.Cells(2, 11).Value
+    greatest_increase_ticker = ws.Cells(2, 9).Value
+    
+    For j = 2 To lastrow
+        
+        If greatest_increase < ws.Cells(j + 1, 11).Value Then
+        
+        greatest_increase = ws.Cells(j + 1, 11).Value
+        greatest_increase_ticker = ws.Cells(j + 1, 9).Value
+        
+        Else
+        
+        greatest_increase = greatest_increase
+        greatest_increase_ticker = greatest_increase_ticker
+        
+        End If
+        
+    Next j
+
+        ws.Range("P2").Value = greatest_increase
+        ws.Range("P2").NumberFormat = "0.00%"
+        ws.Range("O2").Value = greatest_increase_ticker
+        
+    greatest_decrease = ws.Cells(2, 11).Value
+    greatest_increase_ticker = ws.Cells(2, 9).Value
+    
+    For n = 2 To lastrow
+        
+        If greatest_decrease > ws.Cells(n + 1, 11).Value Then
+        
+        greatest_decrease = ws.Cells(n + 1, 11).Value
+        greatest_decrease_ticker = ws.Cells(n + 1, 9).Value
+        
+        Else
+        
+        greatest_decrease = greatest_decrease
+        greatest_decrease_ticker = greatest_decrease_ticker
+        
+        End If
+        
+    Next n
+
+        ws.Range("P3").Value = greatest_decrease
+        ws.Range("P3").NumberFormat = "0.00%"
+        ws.Range("O3").Value = greatest_decrease_ticker
+        
+    greatest_volume = ws.Cells(2, 12).Value
+    greatest_volume_ticker = ws.Cells(2, 9).Value
+    
+    For m = 2 To lastrow
+        
+        If greatest_volume < ws.Cells(m + 1, 12).Value Then
+        
+        greatest_volume = ws.Cells(m + 1, 12).Value
+        greatest_volume_ticker = ws.Cells(m + 1, 9).Value
+        
+        Else
+        
+        greatest_volume = greatest_volume
+        greatest_volume_ticker = greatest_volume_ticker
+        
+        End If
+        
+    Next m
+
+        ws.Range("P4").Value = greatest_volume
+        'Range("P4").NumberFormat = "0.00%"
+        ws.Range("O4").Value = greatest_volume_ticker
+        
+Next
+
+End Sub
+
